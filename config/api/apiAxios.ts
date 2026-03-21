@@ -2,10 +2,11 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 
 // 1. Khởi tạo instance
 const apiAxios: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8888/api",
+  baseURL: "https://96ba-123-20-132-237.ngrok-free.app/api",
   timeout: 10000,
   headers: {
-    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
+    "Content-Type": "multipart/form-data",
   },
 });
 
