@@ -14,7 +14,7 @@ export function StatusBar({ status }: StatusBarProps) {
           bgClass: 'bg-success',
           textClass: 'text-success-foreground',
           icon: CheckCircle2,
-          text: 'CHO XE VÀO',
+          text: 'CHO XE QUA',
         }
       case 'error':
         return {

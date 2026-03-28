@@ -38,7 +38,7 @@ export function LoginForm() {
     try {
       setIsLoading(true);
       const res = await apiAxios.post(ENDPOINTS.AUTH.LOGIN, {username, password})
-      if(!["ADMIN", "STAFF"].includes(res.data?.user?.role)) {
+      if(!["ADMIN", "STAFF", "MANAGE"].includes(res.data?.user?.role)) {
         toast.success("Chỉ có nhân viên mới có thể truy cập.")
         return
       }

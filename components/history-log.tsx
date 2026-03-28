@@ -1,12 +1,12 @@
 'use client'
 
-import { CheckCircle2, AlertCircle } from 'lucide-react'
 
 export interface HistoryEntry {
   id: string
   plate: string
   owner_name: string
   check_in: string
+  check_out: string
 }
 
 interface HistoryLogProps {
@@ -32,16 +32,17 @@ export function HistoryLog({ entries }: HistoryLogProps) {
             {entries.map((entry) => (
               <div
                 key={entry.id}
-                className="px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-sm"
+                className="px-4 py-3 flex items-center justify-between hover:bg-muted/50 transition-colors text-sm"
               >
-                <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />
-                <div className="flex-1 min-w-0">
                   <p className="font-semibold text-foreground truncate">
                     {entry.plate} - {entry.owner_name}
                   </p>
-                </div>
                 <p className="text-xs font-bold text-muted-foreground whitespace-nowrap">
-                  {entry.check_in}
+                  <span>Vào xe: </span>{entry.check_in }
+                </p>
+
+                <p className="text-xs font-bold text-muted-foreground whitespace-nowrap">
+                  <span>Ra xe: </span>{entry.check_out || "---"}
                 </p>
               </div>
             ))}

@@ -3,9 +3,10 @@
 import { useState, useMemo, useEffect } from 'react'
 import { ParkingLogsHeader } from '@/components/parking-logs-header'
 import { ParkingLogsTable } from '@/components/parking-logs-table'
-import { ParkingLogsPagination } from '@/components/parking-logs-pagination'
+import { FooterPagination } from '@/components/footer-pagination'
 import { toast } from 'sonner'
 import { AdminService } from '@/src/services/adminService'
+import { LoadingOverlay } from '@/components/loading-overlay'
 
 interface ParkingRecord {
   id: string
@@ -65,6 +66,7 @@ export default function ParkingLogsPage() {
 
   return (
     <div className="flex-1 bg-background">
+      <LoadingOverlay isLoading={loading} />
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         <ParkingLogsHeader
           searchValue={searchValue}
@@ -72,11 +74,10 @@ export default function ParkingLogsPage() {
         />
 
         <div className="bg-card border border-border rounded-lg">
-            {loading && <div className="absolute inset-0 bg-white/50 z-10 flex items-center justify-center">Loading...</div>}
           <ParkingLogsTable
             records={records}
           />
-          <ParkingLogsPagination
+          <FooterPagination
             currentPage={currentPage}
             totalPages={totalPages}
             totalEntries={totalCount}

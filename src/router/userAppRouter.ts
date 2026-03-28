@@ -7,7 +7,12 @@ export const useAppRouter = () => {
         router.push("/dashboard")
     }
 
+    const goToLogin = () => {
+        router.push("/login")
+    }
+
     return {
-        goToDashBoard
+        goToDashBoard,
+        goToLogin
     }
 }

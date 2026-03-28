@@ -12,7 +12,7 @@ interface ParkingLogsPaginationProps {
   onEntriesPerPageChange: (entries: number) => void
 }
 
-export function ParkingLogsPagination({
+export function FooterPagination({
   currentPage,
   totalPages,
   totalEntries,

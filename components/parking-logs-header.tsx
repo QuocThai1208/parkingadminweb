@@ -17,7 +17,7 @@ export function ParkingLogsHeader({
     <div className="space-y-4 pb-6 border-b border-border">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Lịch Sử Gửi Xe</h1>
+          <h1 className="text-2xl font-bold text-foreground">Lịch Sử Gửi Xe</h1>
           <p className="text-sm text-muted-foreground mt-1">Quản lý và theo dõi các bản ghi đỗ xe</p>
         </div>
       </div>
