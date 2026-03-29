@@ -35,6 +35,7 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
   });
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [loadingSocket, setLoadingSocket] = useState(true);
 
   const cameraConfigs = [
     { id: "face", label: "CAMERA LÁI XE" },
@@ -57,7 +58,7 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
   };
 
   // Gửi dữ liệu giả lập đến API
-  const handleSendTest = async (statusCheck : string) => {
+  const handleSendTest = async (statusCheck: string) => {
     if (!images.face || !images.front || !images.plate) {
       toast.error("Vui lòng chọn đủ 3 ảnh để giả lập dữ liệu camera!");
       return;
@@ -75,7 +76,10 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
     formData.append("image_plate", images.plate);
 
     try {
-      const data = statusCheck==="check_in" ? await ParkingService.check_in(formData) : await ParkingService.check_out(formData);
+      const data =
+        statusCheck === "check_in"
+          ? await ParkingService.check_in(formData)
+          : await ParkingService.check_out(formData);
       setDashboardState({
         ...data?.result, // Giải nén các trường plate, brand, color... từ API
         status: data?.status,
@@ -102,6 +106,33 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
     }
   };
 
+  useEffect(() => {
+    const socket = new WebSocket("ws://127.0.0.1:8000/ws/analytics/");
+
+    socket.onopen = () => {
+      console.log("Kết nối websocket thành công.");
+      setLoadingSocket(false);
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "ai_process_result") {
+          console.log("data: ", data.result);
+          setDashboardState({
+            ...data.result,
+            status: data.status,
+            message: data.message,
+          });
+        }else if (data.type === "error") {
+          console.log(data.message);
+        }
+      } catch (error) {
+        console.error("Lỗi khi xử lý tin nhắn từ WebSocket:", error);
+      }
+    };
+  }, []);
+
   return (
     <div className="p-4 border border-dashed border-primary/30 rounded-xl bg-primary/5">
       <div className="flex items-center justify-between mb-4">
@@ -109,7 +140,7 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
           <ImageIcon className="w-4 h-4" /> BỘ GIẢ LẬP CAMERA (TEST API)
         </h3>
         <button
-          onClick={() =>handleSendTest("check_out")}
+          onClick={() => handleSendTest("check_out")}
           disabled={loading}
           className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-xs font-bold hover:opacity-90 disabled:opacity-50 transition-all"
         >
@@ -121,7 +152,7 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
           GỬI CHECK-OUT
         </button>
         <button
-          onClick={() =>handleSendTest("check_in")}
+          onClick={() => handleSendTest("check_in")}
           disabled={loading}
           className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-xs font-bold hover:opacity-90 disabled:opacity-50 transition-all"
         >

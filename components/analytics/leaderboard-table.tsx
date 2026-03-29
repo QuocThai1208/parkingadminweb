@@ -81,7 +81,7 @@ export function LeaderboardTable() {
                   {index + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-white">{entry.name}</p>
+                  <p className="text-sm font-medium text-white">{entry.full_name}</p>
                   <p className="text-xs text-white/50">{entry.email}</p>
                 </div>
               </div>

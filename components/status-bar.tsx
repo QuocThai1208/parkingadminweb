@@ -12,14 +12,14 @@ export function StatusBar({ status }: StatusBarProps) {
       case 'success':
         return {
           bgClass: 'bg-success',
-          textClass: 'text-success-foreground',
+          textClass: 'text-green-700',
           icon: CheckCircle2,
           text: 'CHO XE QUA',
         }
       case 'error':
         return {
           bgClass: 'bg-destructive',
-          textClass: 'text-destructive-foreground',
+          textClass: 'text-red-700',
           icon: AlertCircle,
           text: 'LỖI',
         }

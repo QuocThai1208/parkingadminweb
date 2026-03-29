@@ -23,7 +23,7 @@ export function ResultDetails({ plate, type, brand, color }: ResultDetailsProps)
     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
       BIỂN SỐ
     </p>
-    <p className="text-3xl font-bold text-foreground font-mono bg-border/30 rounded px-3 py-2 text-center">
+    <p className="text-3xl font-bold text-green-700 font-mono bg-border/30 rounded px-3 py-2 text-center">
       {plate || '---'}
     </p>
   </div>

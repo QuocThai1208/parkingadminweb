@@ -19,8 +19,7 @@ export interface RevenueChartData {
 }
 
 export interface LeaderboardEntry {
-  rank: number;
-  name: string;
+  full_name: string;
   email: string;
   revenue: number;
 }
@@ -110,67 +109,4 @@ export const peakHoursData = [
   { name: '21:00', value: 65 },
   { name: '22:00', value: 48 },
   { name: '23:00', value: 32 },
-];
-
-export const leaderboardData: LeaderboardEntry[] = [
-  {
-    rank: 1,
-    name: 'Nguyễn Văn A',
-    email: 'nguyenvana@email.com',
-    revenue: 12450000,
-  },
-  {
-    rank: 2,
-    name: 'Trần Thị B',
-    email: 'tranthib@email.com',
-    revenue: 11320000,
-  },
-  {
-    rank: 3,
-    name: 'Lê Văn C',
-    email: 'levanc@email.com',
-    revenue: 10850000,
-  },
-  {
-    rank: 4,
-    name: 'Phạm Thị D',
-    email: 'phamthid@email.com',
-    revenue: 9720000,
-  },
-  {
-    rank: 5,
-    name: 'Hoàng Văn E',
-    email: 'hoangvane@email.com',
-    revenue: 8950000,
-  },
-  {
-    rank: 6,
-    name: 'Vũ Thị F',
-    email: 'vuthif@email.com',
-    revenue: 8320000,
-  },
-  {
-    rank: 7,
-    name: 'Đặng Văn G',
-    email: 'dangvang@email.com',
-    revenue: 7650000,
-  },
-  {
-    rank: 8,
-    name: 'Bùi Thị H',
-    email: 'buithih@email.com',
-    revenue: 7120000,
-  },
-  {
-    rank: 9,
-    name: 'Trương Văn I',
-    email: 'truongvani@email.com',
-    revenue: 6480000,
-  },
-  {
-    rank: 10,
-    name: 'Cao Thị J',
-    email: 'caothij@email.com',
-    revenue: 5920000,
-  },
 ];

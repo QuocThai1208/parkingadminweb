@@ -36,7 +36,7 @@ export function MessageBox({ message, type = 'info' }: MessageBoxProps) {
         return {
           bgClass: 'bg-primary/10',
           borderClass: 'border-primary/30',
-          textClass: 'text-primary',
+          textClass: 'text-blue-700',
           icon: Info,
         }
     }
@@ -48,7 +48,7 @@ export function MessageBox({ message, type = 'info' }: MessageBoxProps) {
   return (
     <div className={`w-full ${config.bgClass} border ${config.borderClass} rounded-lg p-4 flex gap-3`}>
       <IconComponent className={`w-5 h-5 flex-shrink-0 ${config.textClass} mt-0.5`} />
-      <p className={`text-sm font-medium ${config.textClass}`}>
+      <p className={`text-sm font-medium ${config.textClass} flex items-center`}>
         {message}
       </p>
     </div>
