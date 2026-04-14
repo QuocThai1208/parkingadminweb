@@ -11,8 +11,13 @@ export const useAppRouter = () => {
         router.push("/login")
     }
 
+    const goToSelectParkingLot = () => {
+        router.push("/select-parkinglot")
+    }
+
     return {
         goToDashBoard,
-        goToLogin
+        goToLogin,
+        goToSelectParkingLot
     }
 }

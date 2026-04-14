@@ -43,7 +43,7 @@ export function ResultDetails({ plate, type, brand, color }: ResultDetailsProps)
     {/* Dòng HIỆU */}
     <div className="flex justify-between items-center border-t border-border/50 pt-3">
       <p className="text-xs font-semibold text-muted-foreground uppercase">
-        HIỆU
+        HÃNG
       </p>
       <p className="text-base font-medium text-foreground">
         {brand || '—'}

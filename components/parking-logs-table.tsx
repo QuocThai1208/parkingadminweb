@@ -116,7 +116,7 @@ export function ParkingLogsTable({ records }: ParkingLogsTableProps) {
               </TableCell>
               <TableCell className="text-sm font-mono text-foreground">{formatDuration(record.duration_minutes)}</TableCell>
               <TableCell className="font-bold text-green-600 dark:text-green-400">
-                {record.fee.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                {record.fee?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
               </TableCell>
               <TableCell>
                 <Badge

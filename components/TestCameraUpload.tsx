@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Upload, X, Send, Image as ImageIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { X, Send, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { ParkingService } from "@/src/services/parkingService";
+import { LoadingOverlay } from "./loading-overlay";
 
 interface UploadState {
   face: File | null;
@@ -36,12 +37,27 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [loadingSocket, setLoadingSocket] = useState(true);
+  const [lotId, setLotId] = useState<string>("");
+  const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  useEffect(() => {
+    const lotId = localStorage.getItem("selected_parking_id") || "";
+    setLotId(lotId);
+  }, []);
 
   const cameraConfigs = [
     { id: "face", label: "CAMERA LÁI XE" },
     { id: "front", label: "CAMERA PHÍA TRƯỚC" },
     { id: "plate", label: "CAMERA BIỂN SỐ" },
   ];
+
+  const resetImages = () => {
+    setImages({ face: null, front: null, plate: null });
+    setPreviews({});
+    Object.values(inputRefs.current).forEach((input) => {
+      if (input) input.value = ""; // Reset giá trị về rỗng
+    });
+  };
 
   // Xử lý khi chọn file
   const handleFileChange = (id: string, file: File | null) => {
@@ -74,6 +90,7 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
     formData.append("face_img", images.face);
     formData.append("image_front", images.front);
     formData.append("image_plate", images.plate);
+    formData.append("parking_lot_id", lotId);
 
     try {
       const data =
@@ -81,7 +98,7 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
           ? await ParkingService.check_in(formData)
           : await ParkingService.check_out(formData);
       setDashboardState({
-        ...data?.result, // Giải nén các trường plate, brand, color... từ API
+        ...data?.result,
         status: data?.status,
         message: data?.message,
       });
@@ -97,11 +114,11 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
 
         toast.error(error.message);
       } else {
-        // Các lỗi khác như 500, 404 hoặc mất mạng
         toast.error("Lỗi hệ thống hoặc Server không phản hồi");
         setDashboardState((prev: any) => ({ ...prev, status: "error" }));
       }
     } finally {
+      resetImages();
       setLoading(false);
     }
   };
@@ -124,7 +141,7 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
             status: data.status,
             message: data.message,
           });
-        }else if (data.type === "error") {
+        } else if (data.type === "error") {
           console.log(data.message);
         }
       } catch (error) {
@@ -133,11 +150,15 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
     };
   }, []);
 
+  if (loadingSocket) {
+    return <LoadingOverlay isLoading={loadingSocket} />;
+  }
+
   return (
     <div className="p-4 border border-dashed border-primary/30 rounded-xl bg-primary/5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-bold flex items-center gap-2">
-          <ImageIcon className="w-4 h-4" /> BỘ GIẢ LẬP CAMERA (TEST API)
+          <Camera className="w-6 h-6" /> BỘ GIẢ LẬP CAMERA (TEST API)
         </h3>
         <button
           onClick={() => handleSendTest("check_out")}
@@ -165,7 +186,7 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-3 w-full">
         {cameraConfigs.map((cam) => (
           <div key={cam.id} className="relative group">
             <label
@@ -182,13 +203,14 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
                 />
               ) : (
                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                  <Upload className="w-6 h-6" />
+                  <Camera className="w-6 h-6" />
                   <span className="text-[10px] font-bold text-center">
                     {cam.label}
                   </span>
                 </div>
               )}
               <input
+                ref={(el) => { inputRefs.current[cam.id] = el;}}
                 type="file"
                 className="hidden"
                 accept="image/*"
@@ -203,6 +225,9 @@ export function TestCameraUpload({ setDashboardState }: TestCameraUploadProps) {
                 onClick={() => {
                   setPreviews((prev) => ({ ...prev, [cam.id]: "" }));
                   setImages((prev) => ({ ...prev, [cam.id]: null }));
+                  if (inputRefs.current[cam.id]) {
+                    inputRefs.current[cam.id]!.value = "";
+                  }
                 }}
                 className="absolute -top-2 -right-2 bg-destructive text-white p-1 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
               >

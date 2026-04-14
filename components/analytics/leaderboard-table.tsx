@@ -18,12 +18,6 @@ export function LeaderboardTable() {
   // Tính toán tổng số trang dựa trên 'count' từ Backend
   const totalPages = Math.ceil(totalCount / entriesPerPage);
 
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1)} triệu`;
-    }
-    return `${(value / 1000).toFixed(0)} nghìn`;
-  };
 
   const getMedalColor = (rank: number) => {
     if (rank === 1) return "text-yellow-400";
@@ -88,7 +82,7 @@ export function LeaderboardTable() {
 
               <div className="text-right">
                 <p className="text-sm font-semibold text-white">
-                  {formatCurrency(entry.revenue)}
+                  {entry.revenue.toLocaleString("vi-VN")} VND
                 </p>
               </div>
             </div>

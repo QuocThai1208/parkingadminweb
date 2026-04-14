@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { filterFeesByType, ParkingFee } from '@/lib/parking-fee-data';
 import { FeeAnalytics } from '@/components/parking/fee-analytics';
 import { FeeTable } from '@/components/parking/fee-table';
@@ -18,13 +18,22 @@ export default function ParkingFeesPage() {
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('ALL');
   const [editingFee, setEditingFee] = useState<ParkingFee | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [lotId, setLotId] = useState<string>('');
+
+  useEffect(() => {
+    const id = localStorage.getItem('selected_parking_id') || '';
+    setLotId(id);
+  }, []);
 
   const filteredFees = filterFeesByType(fees, selectedFilter);
 
   const handleAddFee = async (newFee: Omit<ParkingFee, 'id'> & { id?: string }) => {
     setIsLoading(true);
     try {
-      const data = await ParkingService.createFee(newFee)
+      const params = new URLSearchParams({
+          parking_lot_id: lotId
+        })
+      const data = await ParkingService.createFee(newFee, params);
       const feeWithId: ParkingFee = {...data};
       setFees([...fees, feeWithId]);
     }catch(e:any){
@@ -38,7 +47,10 @@ export default function ParkingFeesPage() {
     setIsLoading(true);
     try {
       if (editingFee?.id) {
-        await ParkingService.updateFee(editingFee?.id, updatedFee)
+        const params = new URLSearchParams({
+          parking_lot_id: lotId
+        })
+        await ParkingService.updateFee(editingFee?.id, updatedFee, params)
         setFees(fees.map(fee => (fee.id === editingFee.id ? { ...fee, ...updatedFee } : fee)));
       }
       setEditingFee(null);
@@ -54,7 +66,10 @@ export default function ParkingFeesPage() {
   const handleToggleFee = async (id: string, active: boolean) => {
     setIsLoading(true);
     try {
-      await ParkingService.updateFeeActive(id, active);
+      const params = new URLSearchParams({
+        parking_lot_id: lotId
+      })
+      await ParkingService.updateFeeActive(id, active, params);
       setFees(fees.map(fee => (fee.id === id ? { ...fee, active: !fee.active } : fee)));
       toast.success("Cạp nhật thành công.")
     }catch(e:any){
@@ -64,25 +79,28 @@ export default function ParkingFeesPage() {
     }
   };
 
-  const fetchFeeRule = async () => {
+  const fetchFeeRule = useCallback(async () => {
     setIsLoading(true);
     try{
-      const data = await ParkingService.get_fee_rule();
+      const params = new URLSearchParams({
+        parking_lot_id: lotId
+      })
+      const data = await ParkingService.get_fee_rule(params);
       setFees(data)
     }catch(e){
       console.log("error at fetch fee role: ", e)
     }finally {
       setIsLoading(false);
     }
-  }
+  }, [lotId])
 
   useEffect(() => {
-    fetchFeeRule()
-  },[])
+    if(lotId) fetchFeeRule()
+  },[lotId, fetchFeeRule])
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
-      <LoadingOverlay isLoading={isLoading} />
+      <LoadingOverlay isLoading={isLoading || !lotId} />
 
       {/* Header Section */}
       <div className="border-b border-white/20 dark:border-white/10 bg-gradient-to-r from-slate-50/50 to-slate-100/50 dark:from-slate-950/50 dark:to-slate-900/50 backdrop-blur-md sticky top-0 z-40">

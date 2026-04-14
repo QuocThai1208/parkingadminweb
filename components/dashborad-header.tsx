@@ -34,14 +34,6 @@ export function DashboardHeader() {
           <h1 className="text-xl font-bold text-foreground">
             HỆ THỐNG QUẢN LÝ GIỮ XE
           </h1>
-          <div className='flex justify-around'>
-            <button className="text-sm text-primary-foreground font-bold px-2 bg-primary rounded-xl cursor-pointer">
-            Cổng vào
-          </button>
-          <button className="text-sm text-primary-foreground font-bold px-2 bg-primary rounded-xl cursor-pointe">
-            Cổng ra
-          </button>
-          </div>
         </div>
 
         <div className="flex flex-col items-end gap-1 text-right">

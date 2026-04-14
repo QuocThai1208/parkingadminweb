@@ -120,7 +120,7 @@ export default function EmployeesPage() {
   }, [searchFullName, searchRole]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
+    <main className="flex-1 bg-gradient-to-b from-background to-secondary/5">
       <LoadingOverlay isLoading={loading} />
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}

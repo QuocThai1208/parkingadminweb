@@ -10,8 +10,9 @@ import {
   Banknote,
   LogOut,
   LayoutDashboard,
-  ChartBar,
-  BarChart3
+  ParkingCircle,
+  BarChart3,
+  Gavel
 } from "lucide-react";
 import {
   Sidebar,
@@ -46,6 +47,12 @@ const navItems: NavItem[] = [
     icon: <LayoutDashboard className="w-5 h-5" />,
     description: "Hệ thống quản lý giữ xe",
   }, {
+    title: "Parking Lots",
+    titleVi: "Thông tin bãi xe",
+    href: "/parking-lot-detail",
+    icon: <ParkingCircle className="w-5 h-5" />,
+    description: "Xem thông tin bãi xe",
+  }, {
     title: "Parking Logs",
     titleVi: "Quản lý lịch sử giữ xe",
     href: "/logs",
@@ -58,20 +65,6 @@ const navItems: NavItem[] = [
     href: "/employees",
     icon: <UserCog className="w-5 h-5" />,
     description: "Quản lý tài khoản nhân viên",
-  },
-  {
-    title: "Customers",
-    titleVi: "Quản lý khách hàng",
-    href: "/customers",
-    icon: <Contact className="w-5 h-5" />,
-    description: "Quản lý dữ liệu khách hàng",
-  },
-  {
-    title: "Vehicles",
-    titleVi: "Quản lý phương tiện",
-    href: "/vehicles",
-    icon: <CarFront className="w-5 h-5" />,
-    description: "Quản lý danh sách phương tiện",
   },
   {
     title: "Pricing",
@@ -92,7 +85,7 @@ const navItems: NavItem[] = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
-  const {goToLogin} = useAppRouter()
+  const {goToLogin, goToSelectParkingLot} = useAppRouter()
   const login = useUserStore((state) => state.logout)
 
   return (
@@ -151,9 +144,21 @@ export function AdminSidebar() {
         <Button
           variant="ghost"
           size="sm"
+          className="w-full justify-start gap-2"
+          onClick={() => {
+              localStorage.removeItem("selected_parking_id")
+              goToSelectParkingLot()
+          }}
+        >
+          <LogOut className="w-4 h-4" />
+          {state === "expanded" && <span>Chọn bãi xe khác</span>}
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
           className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
           onClick={() => {
-              login(),
+              login()
               localStorage.removeItem("authToken")
               localStorage.removeItem('refresh')
               goToLogin()

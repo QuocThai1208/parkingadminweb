@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ParkingLogsHeader } from '@/components/parking-logs-header'
 import { ParkingLogsTable } from '@/components/parking-logs-table'
 import { FooterPagination } from '@/components/footer-pagination'
@@ -26,6 +26,12 @@ export default function ParkingLogsPage() {
   const [records, setRecords] = useState<ParkingRecord[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [lotId, setLotId] = useState<string>('');
+
+  useEffect(() => {
+    const id = localStorage.getItem('selected_parking_id') || '';
+    setLotId(id);
+  }, []);
 
   const [searchValue, setSearchValue] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -35,13 +41,15 @@ export default function ParkingLogsPage() {
   // Tính toán tổng số trang dựa trên 'count' từ Backend
   const totalPages = Math.ceil(totalCount / entriesPerPage);
 
-  const fetchParkingLogs = async () => {
+  const fetchParkingLogs = useCallback(async () => {
     setLoading(true)
+    if(!lotId) return
     try{
         const params = new URLSearchParams({
             page: currentPage.toString(),
             page_size: entriesPerPage.toString(),
-            plate: searchValue
+            plate: searchValue,
+            parking_lot_id: lotId
         })
 
         const data = await AdminService.get_logs(params);
@@ -54,11 +62,11 @@ export default function ParkingLogsPage() {
     } finally {
       setLoading(false);
     }
-  }
+  },[currentPage, entriesPerPage, searchValue, lotId])
 
   useEffect(() => {
     fetchParkingLogs();
-  }, [currentPage, entriesPerPage, searchValue]);
+  }, [fetchParkingLogs]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -66,8 +74,8 @@ export default function ParkingLogsPage() {
 
   return (
     <div className="flex-1 bg-background">
-      <LoadingOverlay isLoading={loading} />
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
+      <LoadingOverlay isLoading={loading || !lotId} />
+      <div className="container mx-auto px-4 py-8 space-y-6">
         <ParkingLogsHeader
           searchValue={searchValue}
           onSearchChange={setSearchValue}

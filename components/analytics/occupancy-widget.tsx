@@ -1,19 +1,30 @@
 'use client';
 
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import type { OccupancyMetric } from '@/lib/analytics-data';
+import { Button } from '../ui/button';
 
 interface OccupancyWidgetProps {
   data: OccupancyMetric;
+  type: string;
+  setType: (type: string) => void;
 }
 
-export function OccupancyWidget({ data }: OccupancyWidgetProps) {
+type FilterVehicleType = 'MOTORCYCLE' | 'CAR' | 'TRUCK' | 'BUS';
+
+export function OccupancyWidget({ data, type, setType }: OccupancyWidgetProps) {
+  const typeMapping = {
+    MOTORCYCLE: 'Xe máy',
+    CAR: 'Ô tô',
+    TRUCK: 'Xe tải',
+    BUS: 'Xe buýt',
+  }
   const chartData = [
     { name: 'Đã đỗ', value: data.occupied, fill: '#3b82f6' },
     { name: 'Còn trống', value: data.available, fill: '#10b981' },
   ];
 
-  const occupancyPercent = ((data.occupied / data.total) * 100).toFixed(1);
+  const occupancyPercent = data.total === 0 ? 0 : ((data.occupied / data.total) * 100).toFixed(1);
 
   return (
     <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md p-6 transition-all duration-300 hover:border-white/20 hover:bg-white/10">
@@ -23,6 +34,22 @@ export function OccupancyWidget({ data }: OccupancyWidgetProps) {
         <div className="space-y-1">
           <h3 className="text-sm font-semibold text-white">Số lượng chỗ đỗ xe</h3>
           <p className="text-xs text-white/60">Trạng thái thời gian thực</p>
+        </div>
+        <div>
+          {(['CAR', 'MOTORCYCLE', 'TRUCK', 'BUS'] as FilterVehicleType[]).map((value) => (
+            <Button
+              key={value}
+              size="sm"
+              onClick={() => setType(value)}
+              className={`rounded transition-all capitalize ${
+                type === value
+                  ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                  : 'text-white/60 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              {typeMapping[value]}
+            </Button>
+          ))}
         </div>
 
         <div className="h-48 w-full">

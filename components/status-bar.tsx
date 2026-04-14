@@ -18,8 +18,8 @@ export function StatusBar({ status }: StatusBarProps) {
         }
       case 'error':
         return {
-          bgClass: 'bg-destructive',
-          textClass: 'text-red-700',
+          bgClass: 'bg-destructive/10',
+          textClass: 'text-destructive',
           icon: AlertCircle,
           text: 'LỖI',
         }

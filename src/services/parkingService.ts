@@ -11,20 +11,20 @@ export const ParkingService = {
     const res = await apiAxios.post(ENDPOINTS.PARKING.CHECK_OUT, data);
     return res.data;
   },
-  get_fee_rule: async () => {
-    const res = await apiAxios.get(ENDPOINTS.FEE_RULE.FEE_RULES);
+  get_fee_rule: async (params: URLSearchParams) => {
+    const res = await apiAxios.get(ENDPOINTS.FEE_RULE.FEE_RULES, { params });
     return res.data;
   },
-  updateFeeActive: async (id: string, active: boolean) => {
-    const res = await apiAxios.patch(ENDPOINTS.FEE_RULE.DETAIL(id), { active });
+  updateFeeActive: async (id: string, active: boolean, params: URLSearchParams) => {
+    const res = await apiAxios.patch(ENDPOINTS.FEE_RULE.DETAIL(id), { active }, { params });
     return res.data;
   },
-  updateFee: async (id: string, updatedFee: Omit<ParkingFee, "id">) => {
-    const res = await apiAxios.put(ENDPOINTS.FEE_RULE.DETAIL(id), updatedFee);
+  updateFee: async (id: string, updatedFee: Omit<ParkingFee, "id">, params: URLSearchParams) => {
+    const res = await apiAxios.put(ENDPOINTS.FEE_RULE.DETAIL(id), updatedFee, { params });
     return res.data;
   },
-  createFee: async (updatedFee: Omit<ParkingFee, "id">) => {
-    const res = await apiAxios.post(ENDPOINTS.FEE_RULE.FEE_RULES, updatedFee);
+  createFee: async (updatedFee: Omit<ParkingFee, "id">, params: URLSearchParams) => {
+    const res = await apiAxios.post(ENDPOINTS.FEE_RULE.FEE_RULES, updatedFee, { params });
     return res.data;
   },
 };
