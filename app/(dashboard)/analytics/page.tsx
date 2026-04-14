@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { BarChart3, DollarSign, Users, TrendingUp } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { BarChart3, DollarSign, TrendingUp } from "lucide-react";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { StatCard } from "@/components/analytics/stat-card";
 import { DateFilter } from "@/components/analytics/date-filter";
@@ -26,6 +26,8 @@ export default function AnalyticsPage() {
   const [revenue, setRevenue] = useState(0);
   const [peakHours, setPeakHours] = useState<PeakHourData[]>([]);
   const [vehicleType, setVehicleType] = useState<VehicleTypeData[]>([]);
+  const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [type, setType] = useState<string>("CAR");
   const [dateValues, setDateValues] = useState({
     day: now.getDate().toString(),
     month: (now.getMonth() + 1).toString(),
@@ -52,6 +54,13 @@ export default function AnalyticsPage() {
     daily: [],
     monthly: [],
   });
+
+  const [lotId, setLotId] = useState<string>('');
+
+  useEffect(() => {
+    const id = localStorage.getItem('selected_parking_id') || '';
+    setLotId(id);
+  }, []);
 
   const fetchVehicleType = async () => {
     try {
@@ -142,17 +151,22 @@ export default function AnalyticsPage() {
     }
   };
 
-  const fetchOccupancy = async () => {
+  const fetchOccupancy = useCallback(async () => {
+    if(!lotId) return;
     try {
       setIsLoading(true);
-      const data = await AnalyticsService.refresh_occupied();
+      const params = new URLSearchParams({
+        parking_lot_id: lotId,
+        vehicle_type: type,
+      });
+      const data = await AnalyticsService.refresh_occupied(params);
       setOccupancy(data?.result);
     } catch (e) {
       console.log("error at fetchOccupancy, ", e);
     } finally {
       setIsLoading(false);
     }
-  };
+  },[lotId, type]);
 
   const handleFilterChange = (values: {
     day: string;
@@ -163,11 +177,19 @@ export default function AnalyticsPage() {
   };
 
   useEffect(() => {
-    fetchOccupancy();
     fetchTotalRevenue();
     fetchRevenueChartData();
     fetchrevenueCompare();
     fetchPeakHours();
+  }, []);
+
+  useEffect(() => {
+    fetchOccupancy();
+  }, [fetchOccupancy]);
+
+  useEffect(() => {
+    // Chỉ chạy ở client sau khi mount
+    setLastUpdated(new Date().toLocaleString("vi-VN"));
   }, []);
 
   useEffect(() => {
@@ -267,7 +289,10 @@ export default function AnalyticsPage() {
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <OccupancyWidget data={occupancy} />
+          <OccupancyWidget 
+          data={occupancy} 
+          type={type}
+          setType={setType} />
           <div className="lg:col-span-2">
             <RevenueChart
               dailyData={revenueChart.daily}
@@ -293,7 +318,7 @@ export default function AnalyticsPage() {
         <div className="rounded-xl border border-white/10 bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-md p-6">
           <p className="text-sm text-white/80">
             <span className="font-semibold">Cập nhật lần cuối:</span>{" "}
-            {new Date().toLocaleString("vi-VN")}
+            {lastUpdated}
           </p>
           <p className="text-xs text-white/50 mt-2">
             Dữ liệu được cập nhật tự động sau mỗi 5 phút.

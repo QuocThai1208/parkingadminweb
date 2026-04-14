@@ -6,8 +6,9 @@ export const AnalyticsService = {
         const res = await apiAxios.get(ENDPOINTS.ANALYTICS.PEAK)
         return res.data
     },
-    refresh_occupied: async () => {
-        const res = await apiAxios.get(ENDPOINTS.ANALYTICS.OCCUPIED)
+    refresh_occupied: async (params: URLSearchParams) => {
+        const url = `${ENDPOINTS.ANALYTICS.OCCUPIED}?${params}`
+        const res = await apiAxios.get(url)
         return res.data
     },
     refresh_data_chart: async () => {
