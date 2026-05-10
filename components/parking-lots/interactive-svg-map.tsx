@@ -184,11 +184,11 @@ export function InteractiveSvgMap({
       {/* Slot Count Info - GIỮ NGUYÊN */}
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-white/5 border border-white/10 rounded-lg p-3 backdrop-blur-md">
-          <p className="text-xs text-muted-foreground">Total Slots</p>
+          <p className="text-xs text-muted-foreground">Tổng vị trí</p>
           <p className="text-lg font-semibold">{parsedSlots.length}</p>
         </div>
         <div className="bg-white/5 border border-white/10 rounded-lg p-3 backdrop-blur-md">
-          <p className="text-xs text-muted-foreground">Available</p>
+          <p className="text-xs text-muted-foreground">Trống</p>
           <p className="text-lg font-semibold text-emerald-400">
             {
               parsedSlots.filter((s) => s.slotData && !s.slotData.is_occupied)
@@ -197,7 +197,7 @@ export function InteractiveSvgMap({
           </p>
         </div>
         <div className="bg-white/5 border border-white/10 rounded-lg p-3 backdrop-blur-md">
-          <p className="text-xs text-muted-foreground">Occupied</p>
+          <p className="text-xs text-muted-foreground">Đã có xe</p>
           <p className="text-lg font-semibold text-rose-400">
             {
               parsedSlots.filter((s) => s.slotData && s.slotData.is_occupied)
@@ -214,16 +214,13 @@ function SlotTag({ tagName, attribs, slot, onHover }: any) {
   const Tag = tagName;
   const slotInfo = slot.slotData;
 
-  // 1. Tính toán màu sắc bằng Logic React (Next-way)
   let fillColor = "#e2e8f0";
   let statusText = "Available";
 
   if (slotInfo?.is_occupied) {
-    // Ưu tiên 1: Có người đỗ (is_occupied = true)
     fillColor = "#3b82f6"; // Màu Xanh dương (Blue-500)
     statusText = "Occupied";
   } else if (slotInfo?.is_look_up) {
-    // Ưu tiên 2: Rào chắn đóng (is_look_up = true và không có người đỗ)
     fillColor = "#ef4444"; // Màu Đỏ (Red-500)
     statusText = "Locked";
   }

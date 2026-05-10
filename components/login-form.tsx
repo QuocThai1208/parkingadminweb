@@ -20,7 +20,6 @@ export function LoginForm() {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    // Demo validation
     if (!username) {
       newErrors.username = "Vui lòng nhập tên đăng nhập";
     }
@@ -38,8 +37,8 @@ export function LoginForm() {
     try {
       setIsLoading(true);
       const res = await apiAxios.post(ENDPOINTS.AUTH.LOGIN, {username, password})
-      if(!["ADMIN", "STAFF", "MANAGE"].includes(res.data?.user?.role)) {
-        toast.success("Chỉ có nhân viên mới có thể truy cập.")
+      if(!["MANAGE"].includes(res.data?.user?.role)) {
+        toast.success("Chỉ có quản lý mới được truy cập.")
         return
       }
       localStorage.setItem("refresh", res.data?.refresh)
@@ -119,17 +118,6 @@ export function LoginForm() {
           </div>
         )}
       </Button>
-
-      <div className="text-center text-xs text-muted-foreground pt-2">
-        <p>
-          Demo: Username:{" "}
-          <span className="font-mono text-foreground">admin</span>
-        </p>
-        <p>
-          Demo: Password:{" "}
-          <span className="font-mono text-foreground">admin</span>
-        </p>
-      </div>
     </form>
   );
 }

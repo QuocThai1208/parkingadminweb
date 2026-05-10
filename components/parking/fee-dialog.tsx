@@ -1,31 +1,35 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
-import { FEE_TYPE_LABELS, FeeType, ParkingFee } from '@/lib/parking-fee-data';
+import { useState, useEffect, use } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Plus } from "lucide-react";
+import { FEE_TYPE_LABELS, FeeType, ParkingFee } from "@/lib/parking-fee-data";
 
 interface FeeDialogProps {
   editingFee?: ParkingFee | null;
-  onSave?: (fee: Omit<ParkingFee, 'id'> & { id?: string }) => void;
+  onSave?: (fee: Omit<ParkingFee, "id"> & { id?: string }) => void;
+  onClose?: () => void;
 }
 
-export function FeeDialog({ editingFee, onSave }: FeeDialogProps) {
+export function FeeDialog({ editingFee, onSave, onClose }: FeeDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    fee_type: 'CAR' as FeeType,
+    fee_type: "CAR" as FeeType,
     amount: 0,
     active: true,
-    effective_from: '',
-    effective_to: '',
+    effective_from: "",
+    effective_to: "",
   });
-
-  useEffect(() => {
-    console.log(formData)
-  }, [formData]);
 
   useEffect(() => {
     if (editingFee) {
@@ -48,41 +52,65 @@ export function FeeDialog({ editingFee, onSave }: FeeDialogProps) {
     });
     setOpen(false);
     setFormData({
-      fee_type: 'CAR',
+      fee_type: "CAR",
       amount: 0,
       active: true,
-      effective_from: '',
-      effective_to: '',
+      effective_from: "",
+      effective_to: "",
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'number' ? parseInt(value) : name === 'active' ? (e.target as HTMLInputElement).checked : value,
+      [name]:
+        type === "number"
+          ? parseInt(value)
+          : name === "active"
+            ? (e.target as HTMLInputElement).checked
+            : value,
     }));
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    console.log("Dialog open state:", isOpen);
+    setOpen(isOpen);
+    if (!isOpen) {
+      onClose?.();
+    }
+    setFormData({
+      fee_type: "CAR",
+      amount: 0,  
+      active: true,
+      effective_from: "",
+      effective_to: "",
+    });
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      {!editingFee && (
-        <DialogTrigger asChild>
-          <Button>
-            <Plus className="w-4 h-4" />
-            Thêm phí mới
-          </Button>
-        </DialogTrigger>
-      )}
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button>
+          <Plus className="w-4 h-4" />
+          Thêm phí mới
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{editingFee ? 'Chỉnh sửa phí' : 'Tạo phí mới'}</DialogTitle>
+          <DialogTitle>
+            {editingFee ? "Chỉnh sửa phí" : "Tạo phí mới"}
+          </DialogTitle>
           <DialogDescription>
-            {editingFee ? 'Cập nhật thông tin phí' : 'Nhập thông tin chi tiết cho phí mới'}
+            {editingFee
+              ? "Cập nhật thông tin phí"
+              : "Nhập thông tin chi tiết cho phí mới"}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className='space-y-2'>
+          <div className="space-y-2">
             <Label htmlFor="fee_type">Loại phương tiện</Label>
             <select
               id="fee_type"
@@ -99,7 +127,7 @@ export function FeeDialog({ editingFee, onSave }: FeeDialogProps) {
             </select>
           </div>
 
-          <div className='space-y-2'>
+          <div className="space-y-2">
             <Label htmlFor="amount">Giá (VND)</Label>
             <Input
               id="amount"
@@ -113,7 +141,7 @@ export function FeeDialog({ editingFee, onSave }: FeeDialogProps) {
             />
           </div>
 
-          <div className='space-y-2'>
+          <div className="space-y-2">
             <Label htmlFor="effective_from">Ngày bắt đầu</Label>
             <Input
               id="effective_from"
@@ -124,7 +152,7 @@ export function FeeDialog({ editingFee, onSave }: FeeDialogProps) {
             />
           </div>
 
-          <div className='space-y-2'>
+          <div className="space-y-2">
             <Label htmlFor="effective_to">Ngày kết thúc</Label>
             <Input
               id="effective_to"
@@ -150,11 +178,15 @@ export function FeeDialog({ editingFee, onSave }: FeeDialogProps) {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button variant="outline" onClick={() => setOpen(false)} className="flex-1">
+            <Button
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
+              className="flex-1"
+            >
               Hủy
             </Button>
             <Button type="submit" className="flex-1 ">
-              {editingFee ? 'Cập nhật' : 'Tạo'}
+              {editingFee ? "Cập nhật" : "Tạo"}
             </Button>
           </div>
         </form>

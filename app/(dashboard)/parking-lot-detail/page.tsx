@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { MapSvgManager } from "@/components/parking-lots/map-svg-manager";
-import { ArrowLeft, MapPin, Gauge } from "lucide-react";
+import { MapPin, Gauge } from "lucide-react";
 import type { ParkingLot, FloorMap } from '@/lib/parking-lot-type';
 import { ParkingLotsService } from "@/src/services/parkingLotsService";
 import { ParkingSlot } from "@/lib/parking-slot-type";
@@ -17,7 +15,6 @@ import { InteractiveSvgMap } from "@/components/parking-lots/interactive-svg-map
 import { MapLegend } from "@/components/parking-lots/map-legend";
 
 export default function ParkingLotDetailPage() {
-  const router = useRouter();
   const lotId = localStorage.getItem("selected_parking_id");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("maps");
@@ -76,7 +73,7 @@ export default function ParkingLotDetailPage() {
       );
       toast.success(data?.message);
     } catch (error:any) {
-      toast.error(error?.error);
+      toast.error("Đã có lỗi xảy ra khi tải lên sơ đồ. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }

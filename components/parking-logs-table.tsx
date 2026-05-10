@@ -20,7 +20,7 @@ interface ParkingRecord {
   check_out: string | null
   duration_minutes: number
   fee: number
-  status: 'in_garage' | 'completed'
+  status: 'IN' | 'OUT'
 }
 
 interface ParkingLogsTableProps {
@@ -120,10 +120,10 @@ export function ParkingLogsTable({ records }: ParkingLogsTableProps) {
               </TableCell>
               <TableCell>
                 <Badge
-                  variant={record.status === 'in_garage' ? 'secondary' : 'default'}
-                  className={record.status === 'in_garage' ? 'bg-yellow-500/20 text-yellow-700 dark:text-yellow-400' : 'bg-green-500/20 text-green-700 dark:text-green-400'}
+                  variant={record.status === 'IN' ? 'secondary' : 'default'}
+                  className={record.status === 'IN' ? 'bg-yellow-500/20 text-yellow-700 dark:text-yellow-400' : 'bg-green-500/20 text-green-700 dark:text-green-400'}
                 >
-                  {record.status === 'in_garage' ? 'Đang Gửi' : 'Hoàn Tất'}
+                  {record.status === 'IN' ? 'Đang Gửi' : 'Hoàn Tất'}
                 </Badge>
               </TableCell>
             </TableRow>

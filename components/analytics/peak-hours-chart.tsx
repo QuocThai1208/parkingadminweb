@@ -20,6 +20,7 @@ interface PeakHoursChartProps {
 }
 
 export function PeakHoursChart({ data }: PeakHoursChartProps) {
+  const current_date = new Date().toLocaleDateString("vi-VN")
 
   const getPeakHourMetrics = () => {
     if (!data || data.length === 0) {
@@ -56,7 +57,7 @@ export function PeakHoursChart({ data }: PeakHoursChartProps) {
             Mô hình giờ cao điểm
           </h3>
           <p className="text-xs text-white/60">
-            Xu hướng tỷ lệ đỗ trong 24 giờ
+            Xu hướng tỷ lệ đỗ trong 24 giờ trong ngày {current_date}
           </p>
         </div>
 

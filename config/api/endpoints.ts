@@ -16,11 +16,11 @@ export const ENDPOINTS = {
         
     },
     EMPLOYEES: {
-        GET_EMPLOYEES: "/admin/employees",
+        GET_EMPLOYEES: "/employees",
         UPDATE_EMPLOYEE:(id:string) => `/employees/${id}`,
         UPDATE_EMPLOYEE_ACTIVE:(id:string) => `/employees/${id}/active`,
         MANAGE_REGISTER: "/admin/manage/register",
-        STAFF_REGISTER: "/admin/staff/register"
+        STAFF_REGISTER: "/employees"
     },
     CUSTOMER: {
         GET_CUSTOMERS: "/admin/customers",
@@ -48,7 +48,7 @@ export const ENDPOINTS = {
         MY_LOTS: "/parking-lots/my-lots",
         LOTS_SELECT: "/parking-lots/select",
         LOTS_DETAIL: (id:string) => `/parking-lots/${id}`,
-        UPLOAD_FULL_MAP: (id:string) => `/parking-lots/${id}/upload-full-map`,
+        UPLOAD_FULL_MAP: (id:number) => `/parking-lots/${id}/upload-full-map`,
         POLICIES: (id:number) => `/parking-lots/${id}/policies`,
         PATCH_POLICY: (lotId:number, policyId:number) => `/parking-lots/${lotId}/policies/${policyId}`
     },
@@ -57,8 +57,10 @@ export const ENDPOINTS = {
     },
     PRICE_STRATEGY: {
         STRATEGIES: "/price-strategies"
+    },
+    JOB_POSITIONS: {
+        POSITIONS: "/job-positions"
     }
-    
 
 
 } as const;

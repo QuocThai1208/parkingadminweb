@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StaffMember, StaffTable } from "@/components/staff/staff-table";
-import { AddStaffDialog } from "@/components/staff/add-staff-dialog";
+import { AddStaffDialog, type CreateStaffPayload } from "@/components/staff/add-staff-dialog";
 import { Search } from "lucide-react";
 import { EmployeesService } from "@/src/services/employeesService";
 import { FooterPagination } from "@/components/footer-pagination";
@@ -17,24 +17,21 @@ export default function EmployeesPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [records, setRecords] = useState<StaffMember[]>([]);
-  const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
 
   const [searchFullName, setSearchFullName] = useState("");
   const [searchRole, setSearchRole] = useState<RoleFilter>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const parking_lot = localStorage.getItem("selected_parking_id") || "";
 
   // Tính toán tổng số trang dựa trên 'count' từ Backend
   const totalPages = Math.ceil(totalCount / entriesPerPage);
 
-  const handleAddStaff = async (staff: any) => {
+  const handleAddStaff = async (staff: CreateStaffPayload) => {
     console.log(staff);
     setLoading(true);
     try {
-      const data =
-        staff.user_role === "STAFF"
-          ? await EmployeesService.staff_register(staff)
-          : await EmployeesService.manage_register(staff);
+      const data = await EmployeesService.staff_register(staff)
       if (currentPage !== 1) {
         setCurrentPage(1);
       } else {
@@ -49,29 +46,6 @@ export default function EmployeesPage() {
     }
   };
 
-  const handleEditStaff = (staff: StaffMember) => {
-    setEditingStaff(staff);
-  };
-
-  const handleUpdateStaff = async (staff: any) => {
-    setLoading(true);
-    try {
-      const { id, ...payload } = staff;
-      const data = await EmployeesService.updateEmployees(payload, id);
-      if (currentPage !== 1) {
-        setCurrentPage(1);
-      } else {
-        fetchEmployees();
-      }
-    } catch (error: any) {
-      console.log("Lỗi khi cập nhật thông tin nhân viên:", error);
-      const errorMsg = error.detail || "Không thể cập nhật thông tin nhân viên";
-      toast.error(errorMsg);
-    } finally {
-      setLoading(false);
-    }
-    setEditingStaff(null);
-  };
 
   const handleUpdateActive = async (id: string, is_active: boolean) => {
     setLoading(true);
@@ -95,10 +69,10 @@ export default function EmployeesPage() {
     setLoading(true);
     try {
       const params = new URLSearchParams({
+        parking_lot: parking_lot,
         page: currentPage.toString(),
         page_size: entriesPerPage.toString(),
-        full_name: searchFullName,
-        role: searchRole,
+        fullname: searchFullName,
       });
 
       const data = await EmployeesService.getEmployees(params);
@@ -132,8 +106,6 @@ export default function EmployeesPage() {
           </div>
           <AddStaffDialog
             onAdd={handleAddStaff}
-            editingStaff={editingStaff}
-            onEdit={handleUpdateStaff}
           />
         </div>
 
@@ -150,25 +122,12 @@ export default function EmployeesPage() {
               className="pl-10"
             />
           </div>
-
-          {/* Role Tabs */}
-          <Tabs
-            value={searchRole}
-            onValueChange={(value) => setSearchRole(value as RoleFilter)}
-          >
-            <TabsList>
-              <TabsTrigger value="">Tất cả</TabsTrigger>
-              <TabsTrigger value="MANAGE">Quản lý</TabsTrigger>
-              <TabsTrigger value="STAFF">Nhân viên</TabsTrigger>
-            </TabsList>
-          </Tabs>
         </div>
 
         {/* Table Section */}
         <div className="rounded-lg bg-white shadow-sm">
           <StaffTable
             staff={records}
-            onEdit={handleEditStaff}
             onUpdateActive={handleUpdateActive}
           />
         </div>

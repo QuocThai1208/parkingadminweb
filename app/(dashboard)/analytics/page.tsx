@@ -230,6 +230,10 @@ export default function AnalyticsPage() {
     fetchrevenueCompare();
   }, [dateValues]);
 
+  useEffect(() => {
+    console.log("Date values changed:", dateValues);
+  }, [dateValues]);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
       <LoadingOverlay isLoading={isLoading} />

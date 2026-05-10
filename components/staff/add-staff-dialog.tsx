@@ -14,30 +14,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Camera, Eye, EyeOff, Plus } from "lucide-react";
 import { StaffMember, UserRole } from "./staff-table";
+import apiAxios from "@/config/api/apiAxios";
+import { ENDPOINTS } from "@/config/api/endpoints";
 
 
 
 export type CreateStaffPayload = Omit<StaffMember, "id" | "age" | "avatar" | "is_active"> & {
   avatar?: File | null;
   password: string;
+  parking_lot: number;
 };
 
-export type UpdateStaffPayload = Omit<StaffMember, "age" | "email" | "avatar" | "is_active"> & {
-  avatar?: File | null;
-};
+interface JobPosition {
+  id: number,
+  title: string,
+  description: string,
+  base_salary: number,
+}
+
+export const JobPosition = {
+  OPERATOR: "Giám sát vận hành",
+  TECHNICAL: "Kỹ thuật viên",
+  MARSHAL: "Điều phối",
+  INCIDENT: "Xử lý sự cố",
+} as const;
 
 interface AddStaffDialogProps {
   onAdd?: (staff: CreateStaffPayload) => void;
-  editingStaff?: StaffMember | null;
-  onEdit?: (staff: UpdateStaffPayload) => void;
 }
 
-export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogProps) {
+export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
   const [open, setOpen] = useState(false);
-  const isEditMode = !!editingStaff;
+  const parking_lot = localStorage.getItem("selected_parking_id") || "";
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectAvatar, setSelectAvatar] = useState<File | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [jobPosition, setJobPosition] = useState<JobPosition[]>([]);
   const [formData, setFormData] = useState({
     full_name: "",
     username: "",
@@ -46,6 +58,7 @@ export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogPr
     address: "",
     user_role: "STAFF" as UserRole,
     password: "",
+    job_position: null,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,26 +68,13 @@ export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogPr
       alert("Please fill in all required fields");
       return;
     }
-    if (isEditMode && editingStaff) {
-      // Edit mode: return UpdateStaffPayload (excludes email, age, password)
-      const payload: UpdateStaffPayload = {
-        id: editingStaff.id,
-        username: formData.username,
-        full_name: formData.full_name,
-        birth: formData.birth,
-        address: formData.address,
-        user_role: formData.user_role,
-        avatar: selectAvatar,
-      };
-      onEdit?.(payload);
-    } else {
       // Add mode: return CreateStaffPayload
       const payload: CreateStaffPayload = {
         ...formData,
         avatar: selectAvatar,
+        parking_lot: parseInt(parking_lot),
       };
       onAdd?.(payload);
-    };
     resetForm()
     setOpen(false);
   };
@@ -88,6 +88,8 @@ export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogPr
       [name]: name === "birth" ? parseInt(value) : value,
     }));
   };
+
+  
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -110,6 +112,7 @@ export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogPr
       address: "",
       user_role: "STAFF",
       password: "",
+      job_position: null,
     });
     setSelectAvatar(null);
     setPreviewImage(null);
@@ -122,21 +125,18 @@ export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogPr
     }
   };
 
+
   useEffect(() => {
-    if (editingStaff) {
-      setFormData({
-        full_name: editingStaff.full_name,
-        username: editingStaff.username,
-        email: editingStaff.email,
-        birth: editingStaff.birth,
-        address: editingStaff.address,
-        user_role: editingStaff.user_role,
-        password: "", 
-      });
-      setPreviewImage(editingStaff.avatar);
-      setOpen(true); 
-    }
-  }, [editingStaff]);
+    const fetchJobPositions = async () => {
+      try {
+        const res = await apiAxios.get(ENDPOINTS.JOB_POSITIONS.POSITIONS);
+        setJobPosition(res.data);
+      } catch (error) {
+        console.error("Error fetching job positions:", error);
+      }
+    };
+    fetchJobPositions();
+  }, []); 
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -149,7 +149,7 @@ export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogPr
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
-            {isEditMode ? "Chỉnh sửa thông tin nhân viên" : "Tạo mới tài khoản nhận viên"}
+            Tạo mới tài khoản nhận viên
             </DialogTitle>
           <DialogDescription>Nhận thông tin</DialogDescription>
         </DialogHeader>
@@ -214,49 +214,7 @@ export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogPr
                 required
               />
             </div>
-            {!isEditMode && (
-            <div className="space-y-2 relative">
-              <Label htmlFor="password">
-                Mật khẩu <p className="text-red-500">*</p>
-              </Label>
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                value={formData.password || ""}
-                onChange={handleChange}
-                required
-                className="pr-10"
-              />
-              <button
-                type="button" // Quan trọng: phải là type="button" để không làm submit form
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-5  translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          )}
-            
-            {!isEditMode && (
-            <div className="space-y-2">
-              <Label htmlFor="email">
-                Email <p className="text-red-500">*</p>
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email || ""}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          )}
+
             <div className="space-y-2">
               <Label htmlFor="birth">Năm sinh</Label>
               <Input
@@ -279,16 +237,19 @@ export function AddStaffDialog({ onAdd, editingStaff, onEdit }: AddStaffDialogPr
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="user_role">Chức vụ</Label>
+              <Label htmlFor="user_role">Vị trí</Label>
               <select
-                id="user_role"
-                name="user_role"
-                value={formData.user_role}
+                id="job_position"
+                name="job_position"
+                value={formData.job_position || ""}
                 onChange={handleChange}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <option value="STAFF">Nhân viên</option>
-                <option value="MANAGE">Quản lý</option>
+                {jobPosition.map((position) => (
+                  <option key={position.id} value={position.id}>
+                    {JobPosition[position.title as keyof typeof JobPosition] || position.title}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex justify-end gap-3 pt-4">

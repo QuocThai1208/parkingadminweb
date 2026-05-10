@@ -25,17 +25,17 @@ export default function SelectParkingPage() {
     router.push('/dashboard');
   };
 
-    const fetchParkingLots = async () => {
-      setIsLoading(true);
-      try {
-        const data = await ParkingLotsService.getParkingLots();
-        setParkingLots(data?.result);
-      }catch(error) {
-        console.error("Error fetching parking lots:", error);
-      } finally {
-        setIsLoading(false);
-      }
+  const fetchParkingLots = async () => {
+    setIsLoading(true);
+    try {
+      const data = await ParkingLotsService.getParkingLots();
+      setParkingLots(data?.result);
+    }catch(error) {
+      console.error("Error fetching parking lots:", error);
+    } finally {
+      setIsLoading(false);
     }
+  }
 
 
   useEffect(() => {

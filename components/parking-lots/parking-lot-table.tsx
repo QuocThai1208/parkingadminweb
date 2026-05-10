@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatThreshold } from '@/lib/parking-lot-utils';
 import { ParkingLotActionMenu } from './parking-lot-action-menu';
 import type { ParkingLot } from '@/lib/parking-lot-type';
 import { useRouter } from 'next/navigation';

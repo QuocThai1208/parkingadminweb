@@ -1,3 +1,4 @@
+import type { CreateStaffPayload } from "@/components/staff/add-staff-dialog"
 import apiAxios from "@/config/api/apiAxios"
 import { ENDPOINTS } from "@/config/api/endpoints"
 
@@ -24,7 +25,7 @@ export const EmployeesService = {
         const res = await apiAxios.post(ENDPOINTS.EMPLOYEES.MANAGE_REGISTER, data)
         return res.data
     },
-    staff_register: async (data: FormData) => {
+    staff_register: async (data: CreateStaffPayload) => {
         const res = await apiAxios.post(ENDPOINTS.EMPLOYEES.STAFF_REGISTER, data)
         return res.data
     },

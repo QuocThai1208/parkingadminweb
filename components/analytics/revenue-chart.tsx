@@ -35,7 +35,7 @@ export function RevenueChart({ dailyData, monthlyData }: RevenueChartProps) {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h3 className="text-sm font-semibold text-white">Xu hướng doanh thu</h3>
-            <p className="text-xs text-white/60">Thu nhập theo thời gian</p>
+            <p className="text-xs text-white/60">Thu nhập trong {view === 'daily' ? '7 ngày' : '12 tháng'} gần nhất</p>
           </div>
           <div className="flex gap-2 bg-white/5 backdrop-blur rounded-lg p-1 border border-white/10">
             <Button

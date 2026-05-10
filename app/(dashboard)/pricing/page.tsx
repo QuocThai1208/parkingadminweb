@@ -117,7 +117,12 @@ export default function ParkingFeesPage() {
                 <p className="text-sm text-muted-foreground mt-1">Quản lý giá phí đỗ xe cho các loại phương tiện</p>
               </div>
             </div>
-            <FeeDialog onSave={editingFee ? handleUpdateFee : handleAddFee} editingFee={editingFee} />
+            <FeeDialog 
+            key={editingFee?.id || 'new'}
+            onSave={editingFee ? handleUpdateFee : handleAddFee} 
+            editingFee={editingFee} 
+            onClose={() => setEditingFee(null)}
+            />
           </div>
 
           {/* Filter Tabs */}

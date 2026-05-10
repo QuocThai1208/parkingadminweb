@@ -19,7 +19,6 @@ export function MapPreview({ latitude, longitude, name }: MapPreviewProps) {
       </h3>
       <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden">
         <div className="bg-slate-800 w-full h-64 flex items-center justify-center">
-          {/* Using placeholder since we need actual API key for real maps */}
           <div className="text-center space-y-2">
             <MapPin className="h-12 w-12 text-slate-600 mx-auto" />
             <p className="text-sm text-slate-400">{latitude.toFixed(4)}, {longitude.toFixed(4)}</p>

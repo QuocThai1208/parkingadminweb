@@ -18,7 +18,7 @@ interface ParkingRecord {
   check_out: string | null
   duration_minutes: number
   fee: number
-  status: 'in_garage' | 'completed'
+  status: 'IN' | 'OUT'
 }
 
 
@@ -34,6 +34,9 @@ export default function ParkingLogsPage() {
   }, []);
 
   const [searchValue, setSearchValue] = useState('')
+  const [day, setDay] = useState("none");
+  const [month, setMonth] = useState("none");
+  const [year, setYear] = useState(new Date().getFullYear().toString());
   const [currentPage, setCurrentPage] = useState(1)
   const [entriesPerPage, setEntriesPerPage] = useState(10)
 
@@ -49,7 +52,10 @@ export default function ParkingLogsPage() {
             page: currentPage.toString(),
             page_size: entriesPerPage.toString(),
             plate: searchValue,
-            parking_lot_id: lotId
+            parking_lot_id: lotId,
+            day: day !== "none" ? day : '',
+            month: month !== "none" ? month : '',
+            year: year !== "none" ? year : '',
         })
 
         const data = await AdminService.get_logs(params);
@@ -62,7 +68,7 @@ export default function ParkingLogsPage() {
     } finally {
       setLoading(false);
     }
-  },[currentPage, entriesPerPage, searchValue, lotId])
+  },[currentPage, entriesPerPage, searchValue, lotId, year, month, day])
 
   useEffect(() => {
     fetchParkingLogs();
@@ -70,7 +76,7 @@ export default function ParkingLogsPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchValue])
+  }, [searchValue, year, month, day])
 
   return (
     <div className="flex-1 bg-background">
@@ -79,6 +85,12 @@ export default function ParkingLogsPage() {
         <ParkingLogsHeader
           searchValue={searchValue}
           onSearchChange={setSearchValue}
+          day={day}
+          month={month}
+          year={year}
+          setDay={setDay}
+          setMonth={setMonth}
+          setYear={setYear}
         />
 
         <div className="bg-card border border-border rounded-lg">

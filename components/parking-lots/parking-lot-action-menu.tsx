@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MoreVertical, Edit, Trash2, MapPin, Eye } from "lucide-react";
+import { Edit, Trash2, Eye } from "lucide-react";
 import type { ParkingLot } from "@/lib/parking-lot-type";
 
 interface ParkingLotActionMenuProps {
