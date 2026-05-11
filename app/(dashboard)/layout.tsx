@@ -9,31 +9,38 @@ import { AdminSidebar } from "@/components/admin-sidebar";
 import { useUserStore } from "@/src/stores/useUserStore";
 import { useEffect, useState } from "react";
 import { LoadingOverlay } from "@/components/loading-overlay";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const hasHydrated = useUserStore((state) => state._hasHydrated);
-  const [lotId, setLotId] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("selected_parking_id") || "";
-    }
-    return "";
-  });
+  const [mounted, setMounted] = useState(false);
+  const [lotId, setLotId] = useState<string | null>(null);
+
+  // chạy trên Client sau khi render lần đầu
+  useEffect(() => {
+    setMounted(true);
+    const id = localStorage.getItem("selected_parking_id");
+    setLotId(id);
+  }, []);
 
   useEffect(() => {
-    if (hasHydrated &&!isLoggedIn) {
-      window.location.href = "/login";
+    // Chỉ logic check khi đã mounted và Zustand đã hydrate xong
+    if (mounted && hasHydrated) {
+      if (!isLoggedIn) {
+        router.push("/login");
+      } else if (!lotId) {
+        router.push("/select-parkinglot");
+      }
     }
-    if (!lotId) {
-      window.location.href = "/select-parkinglot";
-    }
-  }, [isLoggedIn, lotId, hasHydrated]);
+  }, [mounted, hasHydrated, isLoggedIn, lotId, router]);
 
-  if (!hasHydrated || !isLoggedIn || !lotId) {
+  if (!mounted || !hasHydrated || !isLoggedIn || !lotId) {
     return <LoadingOverlay isLoading={true} />;
   }
 
