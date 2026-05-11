@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ImageCaptureArea } from "./image-capture-area";
 import { StatusBar } from "./status-bar";
 import { MessageBox } from "./message-box";

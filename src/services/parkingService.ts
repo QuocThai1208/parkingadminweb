@@ -23,8 +23,8 @@ export const ParkingService = {
     const res = await apiAxios.put(ENDPOINTS.FEE_RULE.DETAIL(id), updatedFee, { params });
     return res.data;
   },
-  createFee: async (updatedFee: Omit<ParkingFee, "id">, params: URLSearchParams) => {
-    const res = await apiAxios.post(ENDPOINTS.FEE_RULE.FEE_RULES, updatedFee, { params });
+  createFee: async (updatedFee: Omit<ParkingFee, "id">) => {
+    const res = await apiAxios.post(ENDPOINTS.FEE_RULE.FEE_RULES, updatedFee);
     return res.data;
   },
 };

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StaffMember, StaffTable } from "@/components/staff/staff-table";
 import { AddStaffDialog, type CreateStaffPayload } from "@/components/staff/add-staff-dialog";
 import { Search } from "lucide-react";
@@ -11,7 +10,6 @@ import { FooterPagination } from "@/components/footer-pagination";
 import { toast } from "sonner";
 import { LoadingOverlay } from "@/components/loading-overlay";
 
-type RoleFilter = "" | "MANAGE" | "STAFF";
 
 export default function EmployeesPage() {
   const [totalCount, setTotalCount] = useState(0);
@@ -19,7 +17,6 @@ export default function EmployeesPage() {
   const [records, setRecords] = useState<StaffMember[]>([]);
 
   const [searchFullName, setSearchFullName] = useState("");
-  const [searchRole, setSearchRole] = useState<RoleFilter>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const parking_lot = localStorage.getItem("selected_parking_id") || "";
@@ -87,11 +84,11 @@ export default function EmployeesPage() {
 
   useEffect(() => {
     fetchEmployees();
-  }, [currentPage, entriesPerPage, searchFullName, searchRole]);
+  }, [currentPage, entriesPerPage, searchFullName]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchFullName, searchRole]);
+  }, [searchFullName]);
 
   return (
     <main className="flex-1 bg-gradient-to-b from-background to-secondary/5">

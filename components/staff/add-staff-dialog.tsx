@@ -17,19 +17,20 @@ import { StaffMember, UserRole } from "./staff-table";
 import apiAxios from "@/config/api/apiAxios";
 import { ENDPOINTS } from "@/config/api/endpoints";
 
-
-
-export type CreateStaffPayload = Omit<StaffMember, "id" | "age" | "avatar" | "is_active"> & {
+export type CreateStaffPayload = Omit<
+  StaffMember,
+  "id" | "age" | "avatar" | "is_active"
+> & {
   avatar?: File | null;
   password: string;
   parking_lot: number;
 };
 
 interface JobPosition {
-  id: number,
-  title: string,
-  description: string,
-  base_salary: number,
+  id: number;
+  title: string;
+  description: string;
+  base_salary: number;
 }
 
 export const JobPosition = {
@@ -68,14 +69,14 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
       alert("Please fill in all required fields");
       return;
     }
-      // Add mode: return CreateStaffPayload
-      const payload: CreateStaffPayload = {
-        ...formData,
-        avatar: selectAvatar,
-        parking_lot: parseInt(parking_lot),
-      };
-      onAdd?.(payload);
-    resetForm()
+    // Add mode: return CreateStaffPayload
+    const payload: CreateStaffPayload = {
+      ...formData,
+      avatar: selectAvatar,
+      parking_lot: parseInt(parking_lot),
+    };
+    onAdd?.(payload);
+    resetForm();
     setOpen(false);
   };
 
@@ -88,8 +89,6 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
       [name]: name === "birth" ? parseInt(value) : value,
     }));
   };
-
-  
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -116,7 +115,7 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
     });
     setSelectAvatar(null);
     setPreviewImage(null);
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
@@ -124,7 +123,6 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
       resetForm();
     }
   };
-
 
   useEffect(() => {
     const fetchJobPositions = async () => {
@@ -136,7 +134,7 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
       }
     };
     fetchJobPositions();
-  }, []); 
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -148,9 +146,7 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>
-            Tạo mới tài khoản nhận viên
-            </DialogTitle>
+          <DialogTitle>Tạo mới tài khoản nhận viên</DialogTitle>
           <DialogDescription>Nhận thông tin</DialogDescription>
         </DialogHeader>
         <form
@@ -216,6 +212,48 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="password">
+                Mật khẩu <span className="text-red-500">*</span>
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password || ""}
+                  onChange={handleChange}
+                  className="pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">
+                Email <p className="text-red-500">*</p>
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email || ""}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="birth">Năm sinh</Label>
               <Input
                 id="birth"
@@ -247,7 +285,8 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
               >
                 {jobPosition.map((position) => (
                   <option key={position.id} value={position.id}>
-                    {JobPosition[position.title as keyof typeof JobPosition] || position.title}
+                    {JobPosition[position.title as keyof typeof JobPosition] ||
+                      position.title}
                   </option>
                 ))}
               </select>
@@ -257,7 +296,7 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  resetForm()
+                  resetForm();
                   setOpen(false);
                 }}
               >

@@ -30,10 +30,11 @@ export default function ParkingFeesPage() {
   const handleAddFee = async (newFee: Omit<ParkingFee, 'id'> & { id?: string }) => {
     setIsLoading(true);
     try {
-      const params = new URLSearchParams({
-          parking_lot_id: lotId
-        })
-      const data = await ParkingService.createFee(newFee, params);
+      const payload = {
+        ...newFee,
+        parking_lot_id: lotId // hoặc parking_lot_id tùy backend ông quy định
+      };
+      const data = await ParkingService.createFee(payload);
       const feeWithId: ParkingFee = {...data};
       setFees([...fees, feeWithId]);
     }catch(e:any){
