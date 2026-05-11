@@ -19,28 +19,26 @@ export default function DashboardLayout({
   const router = useRouter();
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const hasHydrated = useUserStore((state) => state._hasHydrated);
-  const [mounted, setMounted] = useState(false);
+
+  const [isReady, setIsReady] = useState(false);
   const [lotId, setLotId] = useState<string | null>(null);
 
-  // chạy trên Client sau khi render lần đầu
   useEffect(() => {
-    setMounted(true);
-    const id = localStorage.getItem("selected_parking_id");
-    setLotId(id);
-  }, []);
-
-  useEffect(() => {
-    // Chỉ logic check khi đã mounted và Zustand đã hydrate xong
-    if (mounted && hasHydrated) {
+    if (hasHydrated) {
+      const savedLotId = localStorage.getItem("selected_parking_id");
+      
       if (!isLoggedIn) {
-        router.push("/login");
-      } else if (!lotId) {
-        router.push("/select-parkinglot");
+        router.replace("/login");
+      } else if (!savedLotId) {
+        router.replace("/select-parkinglot");
+      } else {
+        setLotId(savedLotId);
+        setIsReady(true); 
       }
     }
-  }, [mounted, hasHydrated, isLoggedIn, lotId, router]);
+  }, [hasHydrated, isLoggedIn, router]);
 
-  if (!mounted || !hasHydrated || !isLoggedIn || !lotId) {
+  if (!isReady) {
     return <LoadingOverlay isLoading={true} />;
   }
 
