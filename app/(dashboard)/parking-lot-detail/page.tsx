@@ -23,6 +23,7 @@ export default function ParkingLotDetailPage() {
 
 
   const fetchParkingLotDetail = async () => {
+    if (!lotId) return;
     setIsLoading(true);
     try {
       const data = await ParkingLotsService.getParkingLotDetail(
@@ -38,7 +39,7 @@ export default function ParkingLotDetailPage() {
 
   useEffect(() => {
     fetchParkingLotDetail();
-  }, []);
+  }, [lotId]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
