@@ -19,7 +19,14 @@ export default function EmployeesPage() {
   const [searchFullName, setSearchFullName] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const parking_lot = localStorage.getItem("selected_parking_id") || "";
+  const [parkingLotId, setParkingLotId] = useState<string>("");
+
+  useEffect(() => {
+    const id = localStorage.getItem("selected_parking_id");
+    if (id) {
+      setParkingLotId(id);
+    }
+  }, []);
 
   // Tính toán tổng số trang dựa trên 'count' từ Backend
   const totalPages = Math.ceil(totalCount / entriesPerPage);
@@ -63,10 +70,11 @@ export default function EmployeesPage() {
   };
 
   const fetchEmployees = async () => {
+    if (!parkingLotId) return;
     setLoading(true);
     try {
       const params = new URLSearchParams({
-        parking_lot: parking_lot,
+        parking_lot: parkingLotId,
         page: currentPage.toString(),
         page_size: entriesPerPage.toString(),
         fullname: searchFullName,
@@ -84,7 +92,7 @@ export default function EmployeesPage() {
 
   useEffect(() => {
     fetchEmployees();
-  }, [currentPage, entriesPerPage, searchFullName]);
+  }, [currentPage, entriesPerPage, searchFullName, parkingLotId]);
 
   useEffect(() => {
     setCurrentPage(1);
