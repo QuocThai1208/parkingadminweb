@@ -46,7 +46,7 @@ interface AddStaffDialogProps {
 
 export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
   const [open, setOpen] = useState(false);
-  const parking_lot = localStorage.getItem("selected_parking_id") || "";
+  const [parkingLotId, setParkingLotId] = useState<string>("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectAvatar, setSelectAvatar] = useState<File | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -73,7 +73,7 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
     const payload: CreateStaffPayload = {
       ...formData,
       avatar: selectAvatar,
-      parking_lot: parseInt(parking_lot),
+      parking_lot: parseInt(parkingLotId),
     };
     onAdd?.(payload);
     resetForm();
@@ -123,6 +123,12 @@ export function AddStaffDialog({ onAdd }: AddStaffDialogProps) {
       resetForm();
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+    setParkingLotId(localStorage.getItem("selected_parking_id") || "");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchJobPositions = async () => {

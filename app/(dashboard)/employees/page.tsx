@@ -22,9 +22,8 @@ export default function EmployeesPage() {
   const [parkingLotId, setParkingLotId] = useState<string>("");
 
   useEffect(() => {
-    const id = localStorage.getItem("selected_parking_id");
-    if (id) {
-      setParkingLotId(id);
+    if (typeof window !== "undefined") {
+    setParkingLotId(localStorage.getItem("selected_parking_id") || "");
     }
   }, []);
 

@@ -15,7 +15,7 @@ import { InteractiveSvgMap } from "@/components/parking-lots/interactive-svg-map
 import { MapLegend } from "@/components/parking-lots/map-legend";
 
 export default function ParkingLotDetailPage() {
-  const lotId = localStorage.getItem("selected_parking_id");
+  const [lotId, setLotId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("maps");
   const [parkingLot, setParkingLot] = useState<ParkingLot | null>(null);
@@ -38,6 +38,12 @@ export default function ParkingLotDetailPage() {
 
   useEffect(() => {
     fetchParkingLotDetail();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+    setLotId(localStorage.getItem("selected_parking_id") || "");
+    }
   }, []);
 
   useEffect(() => {
