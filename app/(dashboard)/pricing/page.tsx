@@ -32,7 +32,7 @@ export default function ParkingFeesPage() {
     try {
       const payload = {
         ...newFee,
-        parking_lot_id: lotId // hoặc parking_lot_id tùy backend ông quy định
+        parking_lot_id: lotId
       };
       const data = await ParkingService.createFee(payload);
       const feeWithId: ParkingFee = {...data};
@@ -48,10 +48,7 @@ export default function ParkingFeesPage() {
     setIsLoading(true);
     try {
       if (editingFee?.id) {
-        const params = new URLSearchParams({
-          parking_lot_id: lotId
-        })
-        await ParkingService.updateFee(editingFee?.id, updatedFee, params)
+        await ParkingService.updateFee(editingFee?.id, updatedFee, lotId)
         setFees(fees.map(fee => (fee.id === editingFee.id ? { ...fee, ...updatedFee } : fee)));
       }
       setEditingFee(null);

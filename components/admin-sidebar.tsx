@@ -74,6 +74,13 @@ const navItems: NavItem[] = [
     description: "Cấu hình giá giữ xe",
   },
   {
+    title: "subscription_packages",
+    titleVi: "Quản lý gói đăng ký",
+    href: "/subscription-packages",
+    icon: <Banknote className="w-5 h-5" />,
+    description: "Quản lý gói đăng ký tháng",
+  },
+  {
     title: "Pricing",
     titleVi: "Phân tích",
     href: "/analytics",

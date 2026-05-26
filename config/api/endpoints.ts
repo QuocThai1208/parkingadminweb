@@ -6,7 +6,9 @@ export const ENDPOINTS = {
         LOGS_HISTORY: "/admin/history",
         LOGS: "/admin/parking-logs",
         VEHICLES: "/admin/vehicles",
-        APPROVED: (id:string) => `/admin/vehicles/${id}/is_approved-change`
+        APPROVED: (id:string) => `/admin/vehicles/${id}/is_approved-change`,
+        SUBSCRIPTION_PACKAGES: "/subscription_packages",
+        SUBSCRIPTION_PACKAGES_DETAIL: (id:string) => `/subscription_packages/${id}`,
     },
     PARKING: {
         CHECK_IN: "/parking/check-in",

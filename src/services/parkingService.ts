@@ -1,6 +1,7 @@
 import apiAxios from "@/config/api/apiAxios";
 import { ENDPOINTS } from "@/config/api/endpoints";
 import { ParkingFee } from "@/lib/parking-fee-data";
+import { param } from "framer-motion/client";
 
 export const ParkingService = {
   check_in: async (data: FormData) => {
@@ -19,8 +20,10 @@ export const ParkingService = {
     const res = await apiAxios.patch(ENDPOINTS.FEE_RULE.DETAIL(id), { active }, { params });
     return res.data;
   },
-  updateFee: async (id: string, updatedFee: Omit<ParkingFee, "id">, params: URLSearchParams) => {
-    const res = await apiAxios.put(ENDPOINTS.FEE_RULE.DETAIL(id), updatedFee, { params });
+  updateFee: async (id: string, updatedFee: Omit<ParkingFee, "id">, lotId: string) => {
+    const res = await apiAxios.put(ENDPOINTS.FEE_RULE.DETAIL(id), {...updatedFee,  parking_lot_id: lotId }, { 
+      params: { parking_lot_id: lotId } 
+    });
     return res.data;
   },
   createFee: async (updatedFee: Omit<ParkingFee, "id">) => {
